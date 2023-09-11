@@ -2,11 +2,18 @@ from re import findall
 from sys import argv
 
 
-def format_code(file_string, rgx_matches, color_markup="", css_color=""): #string = format_code(document, rgx_findall, "JS***", "pnk")
-    for element in rgx_matches:
-        if element != "":
-            file_string=file_string.replace(element, f"""<code style="color:{css_color};">{element.strip(color_markup).replace("<", "&lt;").replace(">", "&gt;")}</code>""")
-    return file_string
+# def format_code(file_string, rgx_matches, color_markup="", css_color=""): #string = format_code(document, rgx_findall, "JS***", "pnk")
+#     for element in rgx_matches:
+#         if element != "":
+#             file_string=file_string.replace(element, f"""<code style="color:{css_color};">{element.strip(color_markup).replace("<", "&lt;").replace(">", "&gt;")}</code>""")
+#     return file_string
+
+#color{"matches": findall(rgx, document), "markup": "PNK***", "css":"pink"}
+def format_code(dump, color, template=""):
+    for item in color.get("matches"):
+        element=item.strip(color.get("markup")).replace("<", "&lt;").replace(">", "&gt;")
+        dump=dump.replace(item, template.format(element=element, css=color.get("css")))
+    return dump
 
 
 if len(argv) == 2:
@@ -18,15 +25,20 @@ if len(argv) == 2:
         commentary           = "##.*"
         tutorial             = ".+(?=##)"    #.+(?= \/\/)
         link                 = "\bhttps?://\S+\b"
-        pnk, pnk_mu, pnk_css = "PNK\*\*\*.*\n", "PNK***", "pink"
-        blu, blu_mu, blu_css = "BLU\*\*\*.*\n", "BLU***", "lightskyblue"
+        # pnk, pnk_mu, pnk_css = "PNK\*\*\*.*\n", "PNK***", "pink"
+        # blu, blu_mu, blu_css = "BLU\*\*\*.*\n", "BLU***", "lightskyblue"
+        code_tag_template    = """<code style="color:{css};">{element}</code>"""
+        # code_tag_template    = """<code style="color:{css};">{element.strip(markup).replace("<", "&lt;").replace(">", "&gt;")}</code>"""
 
         commentaries = findall(commentary, document)
         tutorials    = findall(tutorial, document)
         links        = findall(link, document)
-        pnks         = findall(pnk, document)
-        blus         = findall(blu, document)
+        # pnks         = findall(pnk, document)
+        # blus         = findall(blu, document)
 
+        pink = {"matches":findall("PNK\*\*\*.*\n", document), "markup":"PNK***", "css":"pink"}
+        blue = {"matches":findall("BLU\*\*\*.*\n", document), "markup":"BLU***", "css":"lightskyblue"}
+        comm = {"matches":findall("##.*"         , document), "markup":""      , "css":""}
 
         if len(commentaries) != len(tutorials):
             print("Error: commentaries and tutorials aren't the same length!")
@@ -37,15 +49,20 @@ if len(argv) == 2:
             if l != "":
                 document=document.replace(l, f"""<a href="{l}">{l}</a>""")
 
-        document = format_code(document, pnks, pnk_mu, pnk_css)
+        document = format_code(document, pink, code_tag_template)
+        document = format_code(document, blue, code_tag_template)
+        document = format_code(document, comm)
 
-        document = format_code(document, blus, blu_mu, blu_css)
+
+        # document = format_code(document, pnks, pnk_mu, pnk_css)
+
+        # document = format_code(document, blus, blu_mu, blu_css)
 
 
         #Now that commentaries can be retrieved from a list, let's remove them from the document's body
-        for x in commentaries:
-            if x != "":
-                document=document.replace(x, "")
+        # for x in commentaries:
+        #     if x != "":
+        #         document=document.replace(x, "")
 
 
         for i, tuto in enumerate(tutorials):
