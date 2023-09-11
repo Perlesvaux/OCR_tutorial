@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+        <head>
+           <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+           <style>
+body{
+    background-color: #405d27;
+}
+  span{
+    color:#82b74b;
+  }
+
+  pre{
+    margin: 0 auto;
+    width: fit-content;
+    color:#fff;
+    background:#3e4444;
+    white-space: pre-wrap;
+    border-style: none;
+  }
+
+  .commented{
+    width:fit-content;
+    text-shadow: .1px .1px black;
+  }
+
+  .pnk{
+    color: pink;
+
+  }
+
+  .blu{
+    color: #3399ff;
+
+  }
+
+  .commented:hover{
+    background-color:#82b74b;
+    color:black;
+    cursor: help;
+  }
+
+  /* Popover */
+  .popover {
+    border: 2px inset white;
+    border-radius: 25px;
+  }
+  /* Popover Header */
+  .popover-title {
+    background-color: #73AD21;
+    color: #FFFFFF;
+    font-size: 28px;
+    text-align:center;
+    border-radius: 25px;
+  }
+  /* Popover Body */
+  .popover-content {
+    color:#fff;
+    background:#405d27;
+    padding: 25px;
+    width:fit-content;
+    border-radius: 25px;
+  }
+  /* Popover Arrow */
+  .arrow {
+    border-right-color: white !important;
+  }
+  </style>
+           <title>tutorial.txt</title>
+        </head>
+        <body><pre><code>
+0- install Java, Maven & Tesseract:
+<span class="commented" data-toggle="popover"    data-content="Check version with: java -version">sudo apt install default-jdk</span>
+<span class="commented" data-toggle="popover"    data-content="Check version with: mvn --version">sudo apt install maven</span>
+<span class="commented" data-toggle="popover"    data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
+
+<span class="commented" data-toggle="popover"    data-content="such as: spa.traineddata, eng.traineddata, etc.">You can navigate to this directory to find the language data files.</span>
+ /usr/share/tesseract-ocr/4.0/tessdata/
+
+1- Initial project setup:
+Go to the directory you wanna put your project on. Desktop or Documents should do.
+Open the terminal and enter:
+
+<span class="commented" data-toggle="popover"    data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
+
+add these dependencies to the pom.xml
+<code class="blu">
+</code><code class="blu"> look for &lt;dependencies&gt; tag
+</code><code class="blu"> inside, put this dependency:
+</code><code class="blu">  &lt;dependency&gt;
+</code><code class="blu">      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
+</code><code class="blu">      &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
+</code><code class="blu">      &lt;version&gt;5.8.0&lt;/version&gt;
+</code><code class="blu">  &lt;/dependency&gt;
+</code><code class="blu">
+</code><code class="blu"> look for &lt;build&gt; tag
+</code><code class="blu"> look for &lt;plugins&gt; tag
+</code><code class="blu"> inside, put this plugin:
+</code><code class="blu">  &lt;plugin&gt;
+</code><code class="blu">      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+</code><code class="blu">      &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
+</code><code class="blu">      &lt;version&gt;3.0.0&lt;/version&gt;
+</code><code class="blu">      &lt;executions&gt;
+</code><code class="blu">          &lt;execution&gt;
+</code><code class="blu">              &lt;goals&gt;
+</code><code class="blu">                  &lt;goal&gt;java&lt;/goal&gt;
+</code><code class="blu">              &lt;/goals&gt;
+</code><code class="blu">          &lt;/execution&gt;
+</code><code class="blu">      &lt;/executions&gt;
+</code><code class="blu">      &lt;configuration&gt;
+</code><code class="blu">          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+</code><code class="blu">      &lt;/configuration&gt;
+</code><code class="blu">  &lt;/plugin&gt;
+</code>
+2- time to code!:
+go to src/main/java/COMPANY_NAME/
+
+let's create a class with a main method (i.e.: App.java)
+
+inside, let's put this code:
+
+<code class="pnk">   package COMPANY_NAME;
+</code><code class="pnk">   import java.io.*;
+</code><code class="pnk">   import net.sourceforge.tess4j.*;
+</code><code class="pnk">
+</code><code class="pnk">   public class App
+</code><code class="pnk">   {
+</code><code class="pnk">       public static void main( String[] args ) throws Exception
+</code><code class="pnk">       {
+</code><code class="pnk">         Tesseract t = new Tesseract();
+</code><code class="pnk">         if (args.length == 1)
+</code><code class="pnk">           {
+</code><code class="pnk">             t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
+</code><code class="pnk">             t.setLanguage("spa+eng"); //defaults to english if not specified
+</code><code class="pnk">             String fulltext = t.doOCR(new File(args[0]));
+</code><code class="pnk">             System.out.println(fulltext);
+</code><code class="pnk">           }
+</code><code class="pnk">       }
+</code><code class="pnk">   }
+</code>
+**This path contains the language data files. you can use a different one if you want.
+  More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a
+
+3- let's package and run!:
+mvn clean package
+mvn exec:java -Dexec.args="path/to/image_file"
+
+
+            </code></pre>
+            <script>
+$(document).ready(function(){
+  $('[data-toggle="popover"]').popover();
+});
+</script>
+  
+        </body>
+        </html>
+        
