@@ -2,18 +2,19 @@ from re import findall
 from sys import argv
 
 
-# def format_code(file_string, rgx_matches, color_markup="", css_color=""): #string = format_code(document, rgx_findall, "JS***", "pnk")
-#     for element in rgx_matches:
-#         if element != "":
-#             file_string=file_string.replace(element, f"""<code style="color:{css_color};">{element.strip(color_markup).replace("<", "&lt;").replace(">", "&gt;")}</code>""")
-#     return file_string
 
 #color{"matches": findall(rgx, document), "markup": "PNK***", "css":"pink"}
 def format_code(dump, color, template=""):
-    for item in color.get("matches"):
-        element=item.strip(color.get("markup")).replace("<", "&lt;").replace(">", "&gt;")
-        dump=dump.replace(item, template.format(element=element, css=color.get("css")))
+    for item in color.matches:
+        element=item.strip(color.markup).replace("<", "&lt;").replace(">", "&gt;")
+        dump=dump.replace(item, template.format(element=element, css=color.css))
     return dump
+
+class color:
+    def __init__(self, doc, rgx, markup="", css=""):
+        self.matches = findall(rgx, doc)
+        self.markup  = markup
+        self.css     = css
 
 
 if len(argv) == 2:
@@ -23,10 +24,8 @@ if len(argv) == 2:
         document= fp.read()
 
         commentary           = "##.*"
-        tutorial             = ".+(?=##)"    #.+(?= \/\/)
+        tutorial             = ".+(?=##)"
         link                 = "\bhttps?://\S+\b"
-        # pnk, pnk_mu, pnk_css = "PNK\*\*\*.*\n", "PNK***", "pink"
-        # blu, blu_mu, blu_css = "BLU\*\*\*.*\n", "BLU***", "lightskyblue"
         code_tag_template    = """<code style="color:{css};">{element}</code>"""
         # code_tag_template    = """<code style="color:{css};">{element.strip(markup).replace("<", "&lt;").replace(">", "&gt;")}</code>"""
 
@@ -36,9 +35,13 @@ if len(argv) == 2:
         # pnks         = findall(pnk, document)
         # blus         = findall(blu, document)
 
-        pink = {"matches":findall("PNK\*\*\*.*\n", document), "markup":"PNK***", "css":"pink"}
-        blue = {"matches":findall("BLU\*\*\*.*\n", document), "markup":"BLU***", "css":"lightskyblue"}
-        comm = {"matches":findall("##.*"         , document), "markup":""      , "css":""}
+        # pink = {"matches":findall("PNK\*\*\*.*\n", document), "markup":"PNK***", "css":"pink"}
+        # blue = {"matches":findall("BLU\*\*\*.*\n", document), "markup":"BLU***", "css":"lightskyblue"}
+        # comm = {"matches":findall("##.*"         , document), "markup":""      , "css":""}
+
+        pink = color(document, "PNK\*\*\*.*\n", "PNK***", "pink")
+        blue = color(document, "BLU\*\*\*.*\n", "BLU***", "lightskyblue")
+        comm = color(document, "##.*")
 
         if len(commentaries) != len(tutorials):
             print("Error: commentaries and tutorials aren't the same length!")
