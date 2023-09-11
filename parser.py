@@ -1,11 +1,10 @@
 from re import findall
 from sys import argv
 
-#color{"matches": findall(rgx, document), "markup": "PNK***", "css":"pink"}
 def format_code(dump, color, template=""):
     for item in color.matches:
-        element=item.strip(color.markup).replace("<", "&lt;").replace(">", "&gt;")
-        dump=dump.replace(item, template.format(element=element, css=color.css))
+        txt=item.strip(color.markup).replace("<", "&lt;").replace(">", "&gt;")
+        dump=dump.replace(item, template.format(txt=txt, css=color.css))
     return dump
 
 
@@ -23,51 +22,31 @@ class color:
         self.css     = css
 
 
-
-"""<span class="commented" data-toggle="popover" data-content="{pop}">{txt}</span>"""
-
-
 if len(argv) == 2:
 
     with open(argv[1], 'r') as fp:
 
         document= fp.read()
 
-        # commentary           = "##.*"
-        # tutorial             = ".+(?=##)"
-        link                 = "\bhttps?://\S+\b"
-        code_tag_template    = """<code style="color:{css};">{element}</code>"""
+        code_tag_template    = """<code style="color:{css};">{txt}</code>"""
         comm_tag_template    = """<span class="commented" data-toggle="popover" data-content="{pop}">{txt}</span>"""
-
-        # comm_tag_template    = """<span class="commented" data-toggle="popover" data-content="{commentaries[i].replace('##', '')}">{tuto.strip()}</span>"""
-        # code_tag_template    = """<code style="color:{css};">{element.strip(markup).replace("<", "&lt;").replace(">", "&gt;")}</code>"""
-
-        # commentaries = findall(commentary, document)
-        # tutorials    = findall(tutorial, document)
-        # links        = findall(link, document)
+        link_tag_template    = """<a href="{txt}">{txt}</a>"""
 
         pink = color(document, "PNK\*\*\*.*\n", "PNK***", "pink")
         blue = color(document, "BLU\*\*\*.*\n", "BLU***", "lightskyblue")
         comm = color(document, "##.*"         , "##")
         tuto = color(document, ".+(?=##)")
+        link = color(document, "\bhttps?://\S+\b")
 
         if len(comm.matches) != len(tuto.matches):
             print("Error: commentaries and tutorials aren't the same length!")
             exit(1)
 
-        #adding hyperlinks!
-        # for l in links:
-        #     if l != "":
-        #         document=document.replace(l, f"""<a href="{l}">{l}</a>""")
-
         document = format_code(document, pink, code_tag_template)
         document = format_code(document, blue, code_tag_template)
         document = format_code(document, comm)
         document = add_popover(document, tuto, comm, comm_tag_template)
-
-        # for i, tuto in enumerate(tutorials):
-        #     if tuto != "" and commentaries[i] != "":
-        #         document=document.replace(tuto, f"""<span class="commented" data-toggle="popover"    data-content="{commentaries[i].replace('##', '')}">{tuto.strip()}</span>""")
+        document = format_code(document, link, link_tag_template)
 
 
         bootstrap = """<meta charset="utf-8">
@@ -79,7 +58,7 @@ if len(argv) == 2:
 
         css = """<style>
 body{
-    background-color: #405d27;
+    background-color: black;
 }
   span{
     color:#82b74b;
