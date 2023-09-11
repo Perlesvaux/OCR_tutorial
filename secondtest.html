@@ -8,17 +8,21 @@
 
            <style>
 body{
-    background-color: black;
+    background-color: #313636;
 }
   span{
     color:#82b74b;
+  }
+
+  h2{
+    color:olive;
   }
 
   pre{
     margin: 0 auto;
     width: fit-content;
     color:#fff;
-    background:#3e4444;
+    background:#252828;
     white-space: pre-wrap;
     border-style: none;
   }
@@ -62,8 +66,9 @@ body{
   </style>
            <title>tutorial.txt</title>
         </head>
-        <body><pre><code>
-0- install Java, Maven & Tesseract:
+        <body>
+        <pre>
+<h2>0- install Java, Maven & Tesseract:</h2>
 <span class="commented" data-toggle="popover" data-content="Check version with: java -version">sudo apt install default-jdk</span>
 <span class="commented" data-toggle="popover" data-content="Check version with: mvn --version">sudo apt install maven</span>
 <span class="commented" data-toggle="popover" data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
@@ -71,7 +76,7 @@ body{
 <span class="commented" data-toggle="popover" data-content="such as: spa.traineddata, eng.traineddata, etc.">You can navigate to this directory to find the language data files.</span>
  /usr/share/tesseract-ocr/4.0/tessdata/
 
-1- Initial project setup:
+<h2>1- Initial project setup:</h2>
 Go to the directory you wanna put your project on. Desktop or Documents should do.
 Open the terminal and enter:
 
@@ -106,7 +111,7 @@ add these dependencies to the pom.xml
 </code><code style="color:lightskyblue;">      &lt;/configuration&gt;
 </code><code style="color:lightskyblue;">  &lt;/plugin&gt;
 </code>
-2- time to code!:
+<h2>2- time to code!:</h2>
 go to src/main/java/COMPANY_NAME/
 
 let's create a class with a main method (i.e.: App.java)
@@ -135,12 +140,12 @@ inside, let's put this code:
 **This path contains the language data files. you can use a different one if you want.
   More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a
 
-3- let's package and run!:
+<h2>3- let's package and run!:</h2>
 mvn clean package
 mvn exec:java -Dexec.args="path/to/image_file"
 
 
-            </code></pre>
+        </pre>
             <script>
 $(document).ready(function(){
   $('[data-toggle="popover"]').popover();

@@ -10,8 +10,8 @@ def format_code(dump, color, template=""):
 
 def add_popover(dump, text, comment, template=""):
     for i, val in enumerate(text.matches):
-        if val != "" and comment.matches[i] != "":
-            dump=dump.replace(val, template.format(pop=comment.matches[i].replace(comment.markup, ''), txt=val.strip()))
+        pop=comment.matches[i].replace(comment.markup, '')
+        dump=dump.replace(val, template.format(pop=pop, txt=val.strip()))
     return dump
 
 
@@ -31,12 +31,14 @@ if len(argv) == 2:
         code_tag_template    = """<code style="color:{css};">{txt}</code>"""
         comm_tag_template    = """<span class="commented" data-toggle="popover" data-content="{pop}">{txt}</span>"""
         link_tag_template    = """<a href="{txt}">{txt}</a>"""
+        titl_tag_template    = """<h2>{txt}</h2>"""
 
         pink = color(document, "PNK\*\*\*.*\n", "PNK***", "pink")
         blue = color(document, "BLU\*\*\*.*\n", "BLU***", "lightskyblue")
         comm = color(document, "##.*"         , "##")
         tuto = color(document, ".+(?=##)")
         link = color(document, "\bhttps?://\S+\b")
+        titl = color(document, "\d+.*:")
 
         if len(comm.matches) != len(tuto.matches):
             print("Error: commentaries and tutorials aren't the same length!")
@@ -47,6 +49,7 @@ if len(argv) == 2:
         document = format_code(document, comm)
         document = add_popover(document, tuto, comm, comm_tag_template)
         document = format_code(document, link, link_tag_template)
+        document = format_code(document, titl, titl_tag_template)
 
 
         bootstrap = """<meta charset="utf-8">
@@ -58,17 +61,21 @@ if len(argv) == 2:
 
         css = """<style>
 body{
-    background-color: black;
+    background-color: #313636;
 }
   span{
     color:#82b74b;
+  }
+
+  h2{
+    color:olive;
   }
 
   pre{
     margin: 0 auto;
     width: fit-content;
     color:#fff;
-    background:#3e4444;
+    background:#252828;
     white-space: pre-wrap;
     border-style: none;
   }
@@ -123,9 +130,10 @@ $(document).ready(function(){
            {css}
            <title>{argv[1]}</title>
         </head>
-        <body><pre><code>
+        <body>
+        <pre>
 {document}
-            </code></pre>
+        </pre>
             {JS}
         </body>
         </html>
