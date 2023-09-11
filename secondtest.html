@@ -28,16 +28,6 @@ body{
     text-shadow: .1px .1px black;
   }
 
-  .pnk{
-    color: pink;
-
-  }
-
-  .blu{
-    color: #3399ff;
-
-  }
-
   .commented:hover{
     background-color:#82b74b;
     color:black;
@@ -88,33 +78,33 @@ Open the terminal and enter:
 <span class="commented" data-toggle="popover"    data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
 
 add these dependencies to the pom.xml
-<code class="blu">
-</code><code class="blu"> look for &lt;dependencies&gt; tag
-</code><code class="blu"> inside, put this dependency:
-</code><code class="blu">  &lt;dependency&gt;
-</code><code class="blu">      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
-</code><code class="blu">      &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
-</code><code class="blu">      &lt;version&gt;5.8.0&lt;/version&gt;
-</code><code class="blu">  &lt;/dependency&gt;
-</code><code class="blu">
-</code><code class="blu"> look for &lt;build&gt; tag
-</code><code class="blu"> look for &lt;plugins&gt; tag
-</code><code class="blu"> inside, put this plugin:
-</code><code class="blu">  &lt;plugin&gt;
-</code><code class="blu">      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-</code><code class="blu">      &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
-</code><code class="blu">      &lt;version&gt;3.0.0&lt;/version&gt;
-</code><code class="blu">      &lt;executions&gt;
-</code><code class="blu">          &lt;execution&gt;
-</code><code class="blu">              &lt;goals&gt;
-</code><code class="blu">                  &lt;goal&gt;java&lt;/goal&gt;
-</code><code class="blu">              &lt;/goals&gt;
-</code><code class="blu">          &lt;/execution&gt;
-</code><code class="blu">      &lt;/executions&gt;
-</code><code class="blu">      &lt;configuration&gt;
-</code><code class="blu">          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
-</code><code class="blu">      &lt;/configuration&gt;
-</code><code class="blu">  &lt;/plugin&gt;
+<code style="color:lightskyblue;">
+</code><code style="color:lightskyblue;"> look for &lt;dependencies&gt; tag
+</code><code style="color:lightskyblue;"> inside, put this dependency:
+</code><code style="color:lightskyblue;">  &lt;dependency&gt;
+</code><code style="color:lightskyblue;">      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
+</code><code style="color:lightskyblue;">      &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
+</code><code style="color:lightskyblue;">      &lt;version&gt;5.8.0&lt;/version&gt;
+</code><code style="color:lightskyblue;">  &lt;/dependency&gt;
+</code><code style="color:lightskyblue;">
+</code><code style="color:lightskyblue;"> look for &lt;build&gt; tag
+</code><code style="color:lightskyblue;"> look for &lt;plugins&gt; tag
+</code><code style="color:lightskyblue;"> inside, put this plugin:
+</code><code style="color:lightskyblue;">  &lt;plugin&gt;
+</code><code style="color:lightskyblue;">      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+</code><code style="color:lightskyblue;">      &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
+</code><code style="color:lightskyblue;">      &lt;version&gt;3.0.0&lt;/version&gt;
+</code><code style="color:lightskyblue;">      &lt;executions&gt;
+</code><code style="color:lightskyblue;">          &lt;execution&gt;
+</code><code style="color:lightskyblue;">              &lt;goals&gt;
+</code><code style="color:lightskyblue;">                  &lt;goal&gt;java&lt;/goal&gt;
+</code><code style="color:lightskyblue;">              &lt;/goals&gt;
+</code><code style="color:lightskyblue;">          &lt;/execution&gt;
+</code><code style="color:lightskyblue;">      &lt;/executions&gt;
+</code><code style="color:lightskyblue;">      &lt;configuration&gt;
+</code><code style="color:lightskyblue;">          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+</code><code style="color:lightskyblue;">      &lt;/configuration&gt;
+</code><code style="color:lightskyblue;">  &lt;/plugin&gt;
 </code>
 2- time to code!:
 go to src/main/java/COMPANY_NAME/
@@ -123,24 +113,24 @@ let's create a class with a main method (i.e.: App.java)
 
 inside, let's put this code:
 
-<code class="pnk">   package COMPANY_NAME;
-</code><code class="pnk">   import java.io.*;
-</code><code class="pnk">   import net.sourceforge.tess4j.*;
-</code><code class="pnk">
-</code><code class="pnk">   public class App
-</code><code class="pnk">   {
-</code><code class="pnk">       public static void main( String[] args ) throws Exception
-</code><code class="pnk">       {
-</code><code class="pnk">         Tesseract t = new Tesseract();
-</code><code class="pnk">         if (args.length == 1)
-</code><code class="pnk">           {
-</code><code class="pnk">             t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
-</code><code class="pnk">             t.setLanguage("spa+eng"); //defaults to english if not specified
-</code><code class="pnk">             String fulltext = t.doOCR(new File(args[0]));
-</code><code class="pnk">             System.out.println(fulltext);
-</code><code class="pnk">           }
-</code><code class="pnk">       }
-</code><code class="pnk">   }
+<code style="color:pink;">  package COMPANY_NAME;
+</code><code style="color:pink;">  import java.io.*;
+</code><code style="color:pink;">  import net.sourceforge.tess4j.*;
+</code><code style="color:pink;">
+</code><code style="color:pink;">  public class App
+</code><code style="color:pink;">  {
+</code><code style="color:pink;">      public static void main( String[] args ) throws Exception
+</code><code style="color:pink;">      {
+</code><code style="color:pink;">        Tesseract t = new Tesseract();
+</code><code style="color:pink;">        if (args.length == 1)
+</code><code style="color:pink;">          {
+</code><code style="color:pink;">            t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
+</code><code style="color:pink;">            t.setLanguage("spa+eng"); //defaults to english if not specified
+</code><code style="color:pink;">            String fulltext = t.doOCR(new File(args[0]));
+</code><code style="color:pink;">            System.out.println(fulltext);
+</code><code style="color:pink;">          }
+</code><code style="color:pink;">      }
+</code><code style="color:pink;">  }
 </code>
 **This path contains the language data files. you can use a different one if you want.
   More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a

@@ -2,10 +2,10 @@ from re import findall
 from sys import argv
 
 
-def format_code(file_string, rgx_matches, color_markup="", css_class=""): #string = format_code(document, rgx_findall, "JS***", "pnk")
+def format_code(file_string, rgx_matches, color_markup="", css_color=""): #string = format_code(document, rgx_findall, "JS***", "pnk")
     for element in rgx_matches:
         if element != "":
-            file_string=file_string.replace(element, f"""<code class="{css_class}">{element.strip(color_markup).replace("<", "&lt;").replace(">", "&gt;")}</code>""")
+            file_string=file_string.replace(element, f"""<code style="color:{css_color};">{element.strip(color_markup).replace("<", "&lt;").replace(">", "&gt;")}</code>""")
     return file_string
 
 
@@ -15,11 +15,11 @@ if len(argv) == 2:
 
         document= fp.read()
 
-        commentary = "##.*"
-        tutorial   = ".+(?=##)"    #.+(?= \/\/)
-        link       = "\bhttps?://\S+\b"
-        pnk        = "PNK\*\*\*.*\n"
-        blu        = "BLU\*\*\*.*\n"
+        commentary           = "##.*"
+        tutorial             = ".+(?=##)"    #.+(?= \/\/)
+        link                 = "\bhttps?://\S+\b"
+        pnk, pnk_mu, pnk_css = "PNK\*\*\*.*\n", "PNK***", "pink"
+        blu, blu_mu, blu_css = "BLU\*\*\*.*\n", "BLU***", "lightskyblue"
 
         commentaries = findall(commentary, document)
         tutorials    = findall(tutorial, document)
@@ -32,27 +32,14 @@ if len(argv) == 2:
             print("Error: commentaries and tutorials aren't the same length!")
             exit(1)
 
-
-
-
         #adding hyperlinks!
         for l in links:
             if l != "":
                 document=document.replace(l, f"""<a href="{l}">{l}</a>""")
 
+        document = format_code(document, pnks, pnk_mu, pnk_css)
 
-        #adding color to java-code!
-        # for j in pnks:
-        #     if j != "":
-        #         document=document.replace(j, f"""<code class="pnk">{j.strip("PNK***").replace("<", "&lt;").replace(">", "&gt;")}</code>""")
-        document = format_code(document, pnks, "PNK***", "pnk")
-
-
-        #adding color to java-code!
-        # for j in blus:
-        #     if j != "":
-        #         document=document.replace(j, f"""<code class="blu">{j.strip("BLU***").replace("<", "&lt;").replace(">", "&gt;")}</code>""")
-        document = format_code(document, blus, "BLU***", "blu")
+        document = format_code(document, blus, blu_mu, blu_css)
 
 
         #Now that commentaries can be retrieved from a list, let's remove them from the document's body
@@ -93,16 +80,6 @@ body{
   .commented{
     width:fit-content;
     text-shadow: .1px .1px black;
-  }
-
-  .pnk{
-    color: pink;
-
-  }
-
-  .blu{
-    color: #3399ff;
-
   }
 
   .commented:hover{

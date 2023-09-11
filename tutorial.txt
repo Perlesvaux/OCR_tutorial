@@ -48,24 +48,24 @@ let's create a class with a main method (i.e.: App.java)
 
 inside, let's put this code:
 
-PNK***   package COMPANY_NAME;
-PNK***   import java.io.*;
-PNK***   import net.sourceforge.tess4j.*;
+PNK***  package COMPANY_NAME;
+PNK***  import java.io.*;
+PNK***  import net.sourceforge.tess4j.*;
 PNK***
-PNK***   public class App
-PNK***   {
-PNK***       public static void main( String[] args ) throws Exception
-PNK***       {
-PNK***         Tesseract t = new Tesseract();
-PNK***         if (args.length == 1)
-PNK***           {
-PNK***             t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
-PNK***             t.setLanguage("spa+eng"); //defaults to english if not specified
-PNK***             String fulltext = t.doOCR(new File(args[0]));
-PNK***             System.out.println(fulltext);
-PNK***           }
-PNK***       }
-PNK***   }
+PNK***  public class App
+PNK***  {
+PNK***      public static void main( String[] args ) throws Exception
+PNK***      {
+PNK***        Tesseract t = new Tesseract();
+PNK***        if (args.length == 1)
+PNK***          {
+PNK***            t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
+PNK***            t.setLanguage("spa+eng"); //defaults to english if not specified
+PNK***            String fulltext = t.doOCR(new File(args[0]));
+PNK***            System.out.println(fulltext);
+PNK***          }
+PNK***      }
+PNK***  }
 
 **This path contains the language data files. you can use a different one if you want.
   More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a
