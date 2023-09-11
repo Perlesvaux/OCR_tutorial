@@ -64,18 +64,18 @@ body{
         </head>
         <body><pre><code>
 0- install Java, Maven & Tesseract:
-<span class="commented" data-toggle="popover"    data-content="Check version with: java -version">sudo apt install default-jdk</span>
-<span class="commented" data-toggle="popover"    data-content="Check version with: mvn --version">sudo apt install maven</span>
-<span class="commented" data-toggle="popover"    data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
+<span class="commented" data-toggle="popover" data-content="Check version with: java -version">sudo apt install default-jdk</span>
+<span class="commented" data-toggle="popover" data-content="Check version with: mvn --version">sudo apt install maven</span>
+<span class="commented" data-toggle="popover" data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
 
-<span class="commented" data-toggle="popover"    data-content="such as: spa.traineddata, eng.traineddata, etc.">You can navigate to this directory to find the language data files.</span>
+<span class="commented" data-toggle="popover" data-content="such as: spa.traineddata, eng.traineddata, etc.">You can navigate to this directory to find the language data files.</span>
  /usr/share/tesseract-ocr/4.0/tessdata/
 
 1- Initial project setup:
 Go to the directory you wanna put your project on. Desktop or Documents should do.
 Open the terminal and enter:
 
-<span class="commented" data-toggle="popover"    data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
+<span class="commented" data-toggle="popover" data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
 
 add these dependencies to the pom.xml
 <code style="color:lightskyblue;">

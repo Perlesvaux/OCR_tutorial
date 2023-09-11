@@ -1,8 +1,6 @@
 from re import findall
 from sys import argv
 
-
-
 #color{"matches": findall(rgx, document), "markup": "PNK***", "css":"pink"}
 def format_code(dump, color, template=""):
     for item in color.matches:
@@ -10,11 +8,23 @@ def format_code(dump, color, template=""):
         dump=dump.replace(item, template.format(element=element, css=color.css))
     return dump
 
+
+def add_popover(dump, text, comment, template=""):
+    for i, val in enumerate(text.matches):
+        if val != "" and comment.matches[i] != "":
+            dump=dump.replace(val, template.format(pop=comment.matches[i].replace(comment.markup, ''), txt=val.strip()))
+    return dump
+
+
 class color:
-    def __init__(self, doc, rgx, markup="", css=""):
+    def __init__(self, doc, rgx, markup="none", css=""):
         self.matches = findall(rgx, doc)
         self.markup  = markup
         self.css     = css
+
+
+
+"""<span class="commented" data-toggle="popover" data-content="{pop}">{txt}</span>"""
 
 
 if len(argv) == 2:
@@ -23,54 +33,41 @@ if len(argv) == 2:
 
         document= fp.read()
 
-        commentary           = "##.*"
-        tutorial             = ".+(?=##)"
+        # commentary           = "##.*"
+        # tutorial             = ".+(?=##)"
         link                 = "\bhttps?://\S+\b"
         code_tag_template    = """<code style="color:{css};">{element}</code>"""
+        comm_tag_template    = """<span class="commented" data-toggle="popover" data-content="{pop}">{txt}</span>"""
+
+        # comm_tag_template    = """<span class="commented" data-toggle="popover" data-content="{commentaries[i].replace('##', '')}">{tuto.strip()}</span>"""
         # code_tag_template    = """<code style="color:{css};">{element.strip(markup).replace("<", "&lt;").replace(">", "&gt;")}</code>"""
 
-        commentaries = findall(commentary, document)
-        tutorials    = findall(tutorial, document)
-        links        = findall(link, document)
-        # pnks         = findall(pnk, document)
-        # blus         = findall(blu, document)
-
-        # pink = {"matches":findall("PNK\*\*\*.*\n", document), "markup":"PNK***", "css":"pink"}
-        # blue = {"matches":findall("BLU\*\*\*.*\n", document), "markup":"BLU***", "css":"lightskyblue"}
-        # comm = {"matches":findall("##.*"         , document), "markup":""      , "css":""}
+        # commentaries = findall(commentary, document)
+        # tutorials    = findall(tutorial, document)
+        # links        = findall(link, document)
 
         pink = color(document, "PNK\*\*\*.*\n", "PNK***", "pink")
         blue = color(document, "BLU\*\*\*.*\n", "BLU***", "lightskyblue")
-        comm = color(document, "##.*")
+        comm = color(document, "##.*"         , "##")
+        tuto = color(document, ".+(?=##)")
 
-        if len(commentaries) != len(tutorials):
+        if len(comm.matches) != len(tuto.matches):
             print("Error: commentaries and tutorials aren't the same length!")
             exit(1)
 
         #adding hyperlinks!
-        for l in links:
-            if l != "":
-                document=document.replace(l, f"""<a href="{l}">{l}</a>""")
+        # for l in links:
+        #     if l != "":
+        #         document=document.replace(l, f"""<a href="{l}">{l}</a>""")
 
         document = format_code(document, pink, code_tag_template)
         document = format_code(document, blue, code_tag_template)
         document = format_code(document, comm)
+        document = add_popover(document, tuto, comm, comm_tag_template)
 
-
-        # document = format_code(document, pnks, pnk_mu, pnk_css)
-
-        # document = format_code(document, blus, blu_mu, blu_css)
-
-
-        #Now that commentaries can be retrieved from a list, let's remove them from the document's body
-        # for x in commentaries:
-        #     if x != "":
-        #         document=document.replace(x, "")
-
-
-        for i, tuto in enumerate(tutorials):
-            if tuto != "" and commentaries[i] != "":
-                document=document.replace(tuto, f"""<span class="commented" data-toggle="popover"    data-content="{commentaries[i].replace('##', '')}">{tuto.strip()}</span>""")
+        # for i, tuto in enumerate(tutorials):
+        #     if tuto != "" and commentaries[i] != "":
+        #         document=document.replace(tuto, f"""<span class="commented" data-toggle="popover"    data-content="{commentaries[i].replace('##', '')}">{tuto.strip()}</span>""")
 
 
         bootstrap = """<meta charset="utf-8">
