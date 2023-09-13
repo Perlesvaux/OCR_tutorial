@@ -64,11 +64,11 @@ body{
     border-right-color: white !important;
   }
   </style>
-           <title>tutorial.txt</title>
+           <title>OCR_tutorial</title>
         </head>
         <body>
         <pre>
-<h2>0- install Java, Maven & Tesseract:</h2>
+<h2>0- Install Java, Maven & Tesseract:</h2>
 <span class="commented" data-toggle="popover" data-content="Check version with: java -version">sudo apt install default-jdk</span>
 <span class="commented" data-toggle="popover" data-content="Check version with: mvn --version">sudo apt install maven</span>
 <span class="commented" data-toggle="popover" data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
@@ -82,9 +82,10 @@ Open the terminal and enter:
 
 <span class="commented" data-toggle="popover" data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
 
-add these dependencies to the pom.xml
-<code style="color:lightskyblue;">
-</code><code style="color:lightskyblue;"> look for &lt;dependencies&gt; tag
+Add these dependencies to the pom.xml
+
+This one is a must!
+<code style="color:lightskyblue;"> look for &lt;dependencies&gt; tag
 </code><code style="color:lightskyblue;"> inside, put this dependency:
 </code><code style="color:lightskyblue;">  &lt;dependency&gt;
 </code><code style="color:lightskyblue;">      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
@@ -92,7 +93,8 @@ add these dependencies to the pom.xml
 </code><code style="color:lightskyblue;">      &lt;version&gt;5.8.0&lt;/version&gt;
 </code><code style="color:lightskyblue;">  &lt;/dependency&gt;
 </code><code style="color:lightskyblue;">
-</code><code style="color:lightskyblue;"> look for &lt;build&gt; tag
+</code>[1] This one allows to run a lightweight .jar with mvn 
+<code style="color:lightskyblue;"> look for &lt;build&gt; tag
 </code><code style="color:lightskyblue;"> look for &lt;plugins&gt; tag
 </code><code style="color:lightskyblue;"> inside, put this plugin:
 </code><code style="color:lightskyblue;">  &lt;plugin&gt;
@@ -110,13 +112,42 @@ add these dependencies to the pom.xml
 </code><code style="color:lightskyblue;">          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
 </code><code style="color:lightskyblue;">      &lt;/configuration&gt;
 </code><code style="color:lightskyblue;">  &lt;/plugin&gt;
+</code><code style="color:lightskyblue;">
+</code>[2] This one generates a self-sufficient "fat-jar" that includes all dependencies
+<code style="color:lightskyblue;"> look for &lt;build&gt; tag
+</code><code style="color:lightskyblue;"> look for &lt;plugins&gt; tag
+</code><code style="color:lightskyblue;"> inside, put this plugin:
+</code><code style="color:lightskyblue;">  &lt;plugin&gt;
+</code><code style="color:lightskyblue;">      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+</code><code style="color:lightskyblue;">      &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+</code><code style="color:lightskyblue;">      &lt;version&gt;3.3.0&lt;/version&gt;
+</code><code style="color:lightskyblue;">      &lt;executions&gt;
+</code><code style="color:lightskyblue;">          &lt;execution&gt;
+</code><code style="color:lightskyblue;">              &lt;phase&gt;package&lt;/phase&gt;
+</code><code style="color:lightskyblue;">              &lt;goals&gt;
+</code><code style="color:lightskyblue;">                  &lt;goal&gt;single&lt;/goal&gt;
+</code><code style="color:lightskyblue;">              &lt;/goals&gt;
+</code><code style="color:lightskyblue;">              &lt;configuration&gt;
+</code><code style="color:lightskyblue;">                  &lt;descriptorRefs&gt;
+</code><code style="color:lightskyblue;">                      &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+</code><code style="color:lightskyblue;">                  &lt;/descriptorRefs&gt;
+</code><code style="color:lightskyblue;">                  &lt;archive&gt;
+</code><code style="color:lightskyblue;">                      &lt;manifest&gt;
+</code><code style="color:lightskyblue;">                          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+</code><code style="color:lightskyblue;">                      &lt;/manifest&gt;
+</code><code style="color:lightskyblue;">                  &lt;/archive&gt;
+</code><code style="color:lightskyblue;">              &lt;/configuration&gt;
+</code><code style="color:lightskyblue;">          &lt;/execution&gt;
+</code><code style="color:lightskyblue;">      &lt;/executions&gt;
+</code><code style="color:lightskyblue;">  &lt;/plugin&gt;
+</code><code style="color:lightskyblue;">
 </code>
-<h2>2- time to code!:</h2>
+<h2>2- Time to code!:</h2>
 go to src/main/java/COMPANY_NAME/
 
 let's create a class with a main method (i.e.: App.java)
 
-inside, let's put this code:
+Inside, let's put this code:
 
 <code style="color:pink;">  package COMPANY_NAME;
 </code><code style="color:pink;">  import java.io.*;
@@ -138,12 +169,17 @@ inside, let's put this code:
 </code><code style="color:pink;">  }
 </code>
 **This path contains the language data files. you can use a different one if you want.
-  More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a
+  More languages can be found <a href=" https://tesseract-ocr.github.io/tessdoc/Data-Files">here</a>  
 
-<h2>3- let's package and run!:</h2>
+
+<h2>3- Let's package and run!:</h2>
 mvn clean package
+
+[1] using exec-maven-plugin...
 mvn exec:java -Dexec.args="path/to/image_file"
 
+[2] using maven-assembly-plugin...
+java -jar target/APP_NAME.jar "path/to/image_file"
 
         </pre>
             <script>
