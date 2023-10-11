@@ -26,8 +26,13 @@ if len(argv) == 2:
 
         document= fp.read()
 
-        javacode = lang(document, "java")
+        javacode   = lang(document, "java")
+        bashcode   = lang(document, "bash")
+        markupcode = lang(document, "markup")
+
         document = format_code(document, javacode)
+        document = format_code(document, bashcode)
+        document = format_code(document, markupcode)
 
 
 
