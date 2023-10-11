@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="prism.css" rel="stylesheet" />
 
            <style>
 body{
@@ -64,86 +65,132 @@ body{
     border-right-color: white !important;
   }
   </style>
-           <title>tutorial.txt</title>
+           <title>OCR_tutorial_EX</title>
         </head>
         <body>
         <pre>
-<h2>0- install Java, Maven & Tesseract:</h2>
-<span class="commented" data-toggle="popover" data-content="Check version with: java -version">sudo apt install default-jdk</span>
-<span class="commented" data-toggle="popover" data-content="Check version with: mvn --version">sudo apt install maven</span>
-<span class="commented" data-toggle="popover" data-content="This one here installs all available languages: sudo apt install tesseract-ocr-all -y">sudo apt install tesseract-ocr -y</span>
-
-<span class="commented" data-toggle="popover" data-content="such as: spa.traineddata, eng.traineddata, etc.">You can navigate to this directory to find the language data files.</span>
- /usr/share/tesseract-ocr/4.0/tessdata/
-
-<h2>1- Initial project setup:</h2>
+0- Install Java, Maven & Tesseract:
+<pre><code class="language-bash">
+sudo apt install default-jdk    ##Check version with: java -version
+sudo apt install maven          ##Check version with: mvn --version
+sudo apt install tesseract-ocr -y ##This one here installs all available languages: sudo apt install tesseract-ocr-all -y
+</code></pre>
+You can navigate to this directory to find the language data files. Such as: spa.traineddata, eng.traineddata, etc.
+<pre><code class="language-bash">
+/usr/share/tesseract-ocr/4.0/tessdata/
+</code></pre>
+1- Initial project setup:
 Go to the directory you wanna put your project on. Desktop or Documents should do.
 Open the terminal and enter:
+<pre><code class="language-bash">
+mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
+</code></pre>
+This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.
 
-<span class="commented" data-toggle="popover" data-content="This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.">mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false</span>
+Add these dependencies to the pom.xml
 
-add these dependencies to the pom.xml
-<code style="color:lightskyblue;">
-</code><code style="color:lightskyblue;"> look for &lt;dependencies&gt; tag
-</code><code style="color:lightskyblue;"> inside, put this dependency:
-</code><code style="color:lightskyblue;">  &lt;dependency&gt;
-</code><code style="color:lightskyblue;">      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
-</code><code style="color:lightskyblue;">      &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
-</code><code style="color:lightskyblue;">      &lt;version&gt;5.8.0&lt;/version&gt;
-</code><code style="color:lightskyblue;">  &lt;/dependency&gt;
-</code><code style="color:lightskyblue;">
-</code><code style="color:lightskyblue;"> look for &lt;build&gt; tag
-</code><code style="color:lightskyblue;"> look for &lt;plugins&gt; tag
-</code><code style="color:lightskyblue;"> inside, put this plugin:
-</code><code style="color:lightskyblue;">  &lt;plugin&gt;
-</code><code style="color:lightskyblue;">      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-</code><code style="color:lightskyblue;">      &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
-</code><code style="color:lightskyblue;">      &lt;version&gt;3.0.0&lt;/version&gt;
-</code><code style="color:lightskyblue;">      &lt;executions&gt;
-</code><code style="color:lightskyblue;">          &lt;execution&gt;
-</code><code style="color:lightskyblue;">              &lt;goals&gt;
-</code><code style="color:lightskyblue;">                  &lt;goal&gt;java&lt;/goal&gt;
-</code><code style="color:lightskyblue;">              &lt;/goals&gt;
-</code><code style="color:lightskyblue;">          &lt;/execution&gt;
-</code><code style="color:lightskyblue;">      &lt;/executions&gt;
-</code><code style="color:lightskyblue;">      &lt;configuration&gt;
-</code><code style="color:lightskyblue;">          &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
-</code><code style="color:lightskyblue;">      &lt;/configuration&gt;
-</code><code style="color:lightskyblue;">  &lt;/plugin&gt;
-</code>
-<h2>2- time to code!:</h2>
+This one is a must!
+<pre><code class="language-markup">
+look for &lt;dependencies&gt; tag
+inside, put this dependency:
+ &lt;dependency&gt;
+     &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
+     &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
+     &lt;version&gt;5.8.0&lt;/version&gt;
+ &lt;/dependency&gt;
+</code></pre>
+[1] This one allows to run a lightweight .jar with mvn 
+<pre><code class="language-markup">
+look for &lt;build&gt; tag
+look for &lt;plugins&gt; tag
+inside, put this plugin:
+ &lt;plugin&gt;
+     &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+     &lt;artifactId&gt;exec-maven-plugin&lt;/artifactId&gt;
+     &lt;version&gt;3.0.0&lt;/version&gt;
+     &lt;executions&gt;
+         &lt;execution&gt;
+             &lt;goals&gt;
+                 &lt;goal&gt;java&lt;/goal&gt;
+             &lt;/goals&gt;
+         &lt;/execution&gt;
+     &lt;/executions&gt;
+     &lt;configuration&gt;
+         &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+     &lt;/configuration&gt;
+ &lt;/plugin&gt;
+</code></pre>
+[2] This one generates a self-sufficient "fat-jar" that includes all dependencies
+<pre><code class="language-markup">
+look for &lt;build&gt; tag
+look for &lt;plugins&gt; tag
+inside, put this plugin:
+ &lt;plugin&gt;
+     &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+     &lt;version&gt;3.3.0&lt;/version&gt;
+     &lt;executions&gt;
+         &lt;execution&gt;
+             &lt;phase&gt;package&lt;/phase&gt;
+             &lt;goals&gt;
+                 &lt;goal&gt;single&lt;/goal&gt;
+             &lt;/goals&gt;
+             &lt;configuration&gt;
+                 &lt;descriptorRefs&gt;
+                     &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+                 &lt;/descriptorRefs&gt;
+                 &lt;archive&gt;
+                     &lt;manifest&gt;
+                         &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+                     &lt;/manifest&gt;
+                 &lt;/archive&gt;
+             &lt;/configuration&gt;
+         &lt;/execution&gt;
+     &lt;/executions&gt;
+ &lt;/plugin&gt;
+</code></pre>
+
+2- Time to code!:
 go to src/main/java/COMPANY_NAME/
 
 let's create a class with a main method (i.e.: App.java)
 
-inside, let's put this code:
+Inside, let's put this code:
+<pre><code class="language-java">
+package COMPANY_NAME;
+import java.io.*;
+import net.sourceforge.tess4j.*;
 
-<code style="color:pink;">  package COMPANY_NAME;
-</code><code style="color:pink;">  import java.io.*;
-</code><code style="color:pink;">  import net.sourceforge.tess4j.*;
-</code><code style="color:pink;">
-</code><code style="color:pink;">  public class App
-</code><code style="color:pink;">  {
-</code><code style="color:pink;">      public static void main( String[] args ) throws Exception
-</code><code style="color:pink;">      {
-</code><code style="color:pink;">        Tesseract t = new Tesseract();
-</code><code style="color:pink;">        if (args.length == 1)
-</code><code style="color:pink;">          {
-</code><code style="color:pink;">            t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
-</code><code style="color:pink;">            t.setLanguage("spa+eng"); //defaults to english if not specified
-</code><code style="color:pink;">            String fulltext = t.doOCR(new File(args[0]));
-</code><code style="color:pink;">            System.out.println(fulltext);
-</code><code style="color:pink;">          }
-</code><code style="color:pink;">      }
-</code><code style="color:pink;">  }
-</code>
+public class App
+{
+    public static void main( String[] args ) throws Exception
+    {
+      Tesseract t = new Tesseract();
+      if (args.length == 1)
+        {
+          t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
+          t.setLanguage("spa+eng"); //defaults to english if not specified
+          String fulltext = t.doOCR(new File(args[0]));
+          System.out.println(fulltext);
+        }
+    }
+}
+</code></pre>
+
 **This path contains the language data files. you can use a different one if you want.
-  More languages can be found at https://tesseract-ocr.github.io/tessdoc/Data-Files and found a
+  More languages can be found ###*here###*  ^^^ https://tesseract-ocr.github.io/tessdoc/Data-Files^^^
 
-<h2>3- let's package and run!:</h2>
+
+3- Let's package and run!:
+<pre><code class="language-bash">
 mvn clean package
+
+[1] using exec-maven-plugin...
 mvn exec:java -Dexec.args="path/to/image_file"
 
+[2] using maven-assembly-plugin...
+java -jar target/APP_NAME.jar "path/to/image_file"
+</code></pre>
 
         </pre>
             <script>
@@ -152,6 +199,9 @@ $(document).ready(function(){
 });
 </script>
   
+  	    <script src="prism.js"></script>
         </body>
         </html>
         
+@java([\s\S]*?)@javaend
+['\npackage COMPANY_NAME;\nimport java.io.*;\nimport net.sourceforge.tess4j.*;\n\npublic class App\n{\n    public static void main( String[] args ) throws Exception\n    {\n      Tesseract t = new Tesseract();\n      if (args.length == 1)\n        {\n          t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**\n          t.setLanguage("spa+eng"); //defaults to english if not specified\n          String fulltext = t.doOCR(new File(args[0]));\n          System.out.println(fulltext);\n        }\n    }\n}\n']
