@@ -1,0 +1,113 @@
+0- Install Java, Maven & Tesseract:
+sudo apt install default-jdk    ##Check version with: java -version
+sudo apt install maven          ##Check version with: mvn --version
+sudo apt install tesseract-ocr -y ##This one here installs all available languages: sudo apt install tesseract-ocr-all -y
+
+You can navigate to this directory to find the language data files.  ##such as: spa.traineddata, eng.traineddata, etc.
+ /usr/share/tesseract-ocr/4.0/tessdata/
+
+1- Initial project setup:
+Go to the directory you wanna put your project on. Desktop or Documents should do.
+Open the terminal and enter:
+
+mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false   ##This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.
+
+Add these dependencies to the pom.xml
+
+This one is a must!
+BLU*** look for <dependencies> tag
+BLU*** inside, put this dependency:
+BLU***  <dependency>
+BLU***      <groupId>net.sourceforge.tess4j</groupId>
+BLU***      <artifactId>tess4j</artifactId>
+BLU***      <version>5.8.0</version>
+BLU***  </dependency>
+BLU***
+[1] This one allows to run a lightweight .jar with mvn 
+BLU*** look for <build> tag
+BLU*** look for <plugins> tag
+BLU*** inside, put this plugin:
+BLU***  <plugin>
+BLU***      <groupId>org.codehaus.mojo</groupId>
+BLU***      <artifactId>exec-maven-plugin</artifactId>
+BLU***      <version>3.0.0</version>
+BLU***      <executions>
+BLU***          <execution>
+BLU***              <goals>
+BLU***                  <goal>java</goal>
+BLU***              </goals>
+BLU***          </execution>
+BLU***      </executions>
+BLU***      <configuration>
+BLU***          <mainClass>COMPANY_NAME.MAIN_CLASS</mainClass>
+BLU***      </configuration>
+BLU***  </plugin>
+BLU***
+[2] This one generates a self-sufficient "fat-jar" that includes all dependencies
+BLU*** look for <build> tag
+BLU*** look for <plugins> tag
+BLU*** inside, put this plugin:
+BLU***  <plugin>
+BLU***      <groupId>org.apache.maven.plugins</groupId>
+BLU***      <artifactId>maven-assembly-plugin</artifactId>
+BLU***      <version>3.3.0</version>
+BLU***      <executions>
+BLU***          <execution>
+BLU***              <phase>package</phase>
+BLU***              <goals>
+BLU***                  <goal>single</goal>
+BLU***              </goals>
+BLU***              <configuration>
+BLU***                  <descriptorRefs>
+BLU***                      <descriptorRef>jar-with-dependencies</descriptorRef>
+BLU***                  </descriptorRefs>
+BLU***                  <archive>
+BLU***                      <manifest>
+BLU***                          <mainClass>COMPANY_NAME.MAIN_CLASS</mainClass>
+BLU***                      </manifest>
+BLU***                  </archive>
+BLU***              </configuration>
+BLU***          </execution>
+BLU***      </executions>
+BLU***  </plugin>
+BLU***
+
+2- Time to code!:
+go to src/main/java/COMPANY_NAME/
+
+let's create a class with a main method (i.e.: App.java)
+
+Inside, let's put this code:
+@java
+package COMPANY_NAME;
+import java.io.*;
+import net.sourceforge.tess4j.*;
+
+public class App
+{
+    public static void main( String[] args ) throws Exception
+    {
+      Tesseract t = new Tesseract();
+      if (args.length == 1)
+        {
+          t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**
+          t.setLanguage("spa+eng"); //defaults to english if not specified
+          String fulltext = t.doOCR(new File(args[0]));
+          System.out.println(fulltext);
+        }
+    }
+}
+@javaend
+
+**This path contains the language data files. you can use a different one if you want.
+  More languages can be found ###*here###*  ^^^ https://tesseract-ocr.github.io/tessdoc/Data-Files^^^
+
+
+3- Let's package and run!:
+mvn clean package
+
+[1] using exec-maven-plugin...
+mvn exec:java -Dexec.args="path/to/image_file"
+
+[2] using maven-assembly-plugin...
+java -jar target/APP_NAME.jar "path/to/image_file"
