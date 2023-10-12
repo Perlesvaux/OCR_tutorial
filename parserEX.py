@@ -1,6 +1,21 @@
 from re import findall
 from sys import argv
 
+"""
+Custom markup mappings:
+
+@java ...        @javaq -> encircles java-code
+@python ...      @pythonq -> encircles python-code
+@js ...          @jsq -> encircles java-code
+@bash ...        @bashq -> encircles bash-code
+@markup ...      @markupq -> encircles css/html/xml code
+      --and so on--
+
+@# ...           @#q -> encircles h2
+@a ...           @aq -> encircles links
+@href ...        @hrefq -> encircles link references
+"""
+
 
 def format_code(dump, lang):
     for item in lang.matches:
@@ -49,7 +64,7 @@ if len(argv) == 2:
         document = add_link(document, links)
 
         #Mapping each code snippet to its lang-specific css
-        all_languages = ["java", "bash", "markup", "python", "css", "javascript", "csharp"]
+        all_languages = ["java", "bash", "markup", "python", "css", "js", "csharp", "sql", "json", "php"]
         for each in all_languages:
             document = format_code(document, lang(document, each))
 

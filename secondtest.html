@@ -22,7 +22,7 @@ body{
   pre{
     margin: 0 auto;
     width: fit-content;
-    color:#fff;
+    color: BurlyWood;
     background:#252828;
     white-space: pre-wrap;
     border-style: none;
@@ -69,30 +69,30 @@ body{
         </head>
         <body>
         <pre>
-0- Install Java, Maven & Tesseract:
+<h2>0- Install Java, Maven &amp; Tesseract:</h2>
 <pre><code class="language-bash">
-sudo apt install default-jdk    ##Check version with: java -version
-sudo apt install maven          ##Check version with: mvn --version
-sudo apt install tesseract-ocr -y ##This one here installs all available languages: sudo apt install tesseract-ocr-all -y
+sudo apt install default-jdk      #Check version with: java -version
+sudo apt install maven            #Check version with: mvn --version
+sudo apt install tesseract-ocr -y #This one here installs all available languages: sudo apt install tesseract-ocr-all -y
 </code></pre>
 You can navigate to this directory to find the language data files. Such as: spa.traineddata, eng.traineddata, etc.
 <pre><code class="language-bash">
-/usr/share/tesseract-ocr/4.0/tessdata/
+cd /usr/share/tesseract-ocr/4.0/tessdata/
 </code></pre>
-1- Initial project setup:
+<h2>1- Initial project setup:</h2>
 Go to the directory you wanna put your project on. Desktop or Documents should do.
 Open the terminal and enter:
 <pre><code class="language-bash">
+#This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME/APP_NAME is where your code goes.
 mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
 </code></pre>
-This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.
 
 Add these dependencies to the pom.xml
 
 This one is a must!
 <pre><code class="language-markup">
-look for &lt;dependencies&gt; tag
-inside, put this dependency:
+&lt;!--look for &lt;dependencies&gt; tag--&gt;
+&lt;!--inside, put this dependency:--&gt;
  &lt;dependency&gt;
      &lt;groupId&gt;net.sourceforge.tess4j&lt;/groupId&gt;
      &lt;artifactId&gt;tess4j&lt;/artifactId&gt;
@@ -101,8 +101,8 @@ inside, put this dependency:
 </code></pre>
 [1] This one allows to run a lightweight .jar with mvn 
 <pre><code class="language-markup">
-look for &lt;build&gt; tag
-look for &lt;plugins&gt; tag
+&lt;!--look for &lt;build&gt; tag--&gt;
+&lt;!--look for &lt;plugins&gt; tag--&gt;
 inside, put this plugin:
  &lt;plugin&gt;
      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
@@ -116,14 +116,14 @@ inside, put this plugin:
          &lt;/execution&gt;
      &lt;/executions&gt;
      &lt;configuration&gt;
-         &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+         &lt;mainClass&gt;COMPANY_NAME.APP_NAME.MAIN_CLASS&lt;/mainClass&gt;
      &lt;/configuration&gt;
  &lt;/plugin&gt;
 </code></pre>
 [2] This one generates a self-sufficient "fat-jar" that includes all dependencies
 <pre><code class="language-markup">
-look for &lt;build&gt; tag
-look for &lt;plugins&gt; tag
+&lt;!--look for &lt;build&gt; tag--&gt;
+&lt;!--look for &lt;plugins&gt; tag--&gt;
 inside, put this plugin:
  &lt;plugin&gt;
      &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
@@ -141,7 +141,7 @@ inside, put this plugin:
                  &lt;/descriptorRefs&gt;
                  &lt;archive&gt;
                      &lt;manifest&gt;
-                         &lt;mainClass&gt;COMPANY_NAME.MAIN_CLASS&lt;/mainClass&gt;
+                         &lt;mainClass&gt;COMPANY_NAME.APP_NAME.MAIN_CLASS&lt;/mainClass&gt;
                      &lt;/manifest&gt;
                  &lt;/archive&gt;
              &lt;/configuration&gt;
@@ -150,14 +150,14 @@ inside, put this plugin:
  &lt;/plugin&gt;
 </code></pre>
 
-2- Time to code!:
-go to src/main/java/COMPANY_NAME/
+<h2>2- Time to code!:</h2>
+go to src/main/java/COMPANY_NAME/APP_NAME
 
 let's create a class with a main method (i.e.: App.java)
 
 Inside, let's put this code:
 <pre><code class="language-java">
-package COMPANY_NAME;
+package COMPANY_NAME.APP_NAME;
 import java.io.*;
 import net.sourceforge.tess4j.*;
 
@@ -178,17 +178,20 @@ public class App
 </code></pre>
 
 **This path contains the language data files. you can use a different one if you want.
-  More languages can be found ###*here###*  ^^^ https://tesseract-ocr.github.io/tessdoc/Data-Files^^^
+  More languages can be found <a href=" https://tesseract-ocr.github.io/tessdoc/Data-Files ">here </a>  
 
 
-3- Let's package and run!:
+<h2>3- Let's package and run!:</h2>
 <pre><code class="language-bash">
 mvn clean package
-
+</code></pre>
 [1] using exec-maven-plugin...
+<pre><code class="language-bash">
 mvn exec:java -Dexec.args="path/to/image_file"
+</code></pre>
 
 [2] using maven-assembly-plugin...
+<pre><code class="language-bash">
 java -jar target/APP_NAME.jar "path/to/image_file"
 </code></pre>
 
@@ -203,5 +206,3 @@ $(document).ready(function(){
         </body>
         </html>
         
-@java([\s\S]*?)@javaend
-['\npackage COMPANY_NAME;\nimport java.io.*;\nimport net.sourceforge.tess4j.*;\n\npublic class App\n{\n    public static void main( String[] args ) throws Exception\n    {\n      Tesseract t = new Tesseract();\n      if (args.length == 1)\n        {\n          t.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata"); //this one is tricky!**\n          t.setLanguage("spa+eng"); //defaults to english if not specified\n          String fulltext = t.doOCR(new File(args[0]));\n          System.out.println(fulltext);\n        }\n    }\n}\n']
