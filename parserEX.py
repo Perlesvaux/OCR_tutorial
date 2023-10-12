@@ -1,24 +1,37 @@
 from re import findall
 from sys import argv
 
-# @java([\s\S]*?)@javaend
+
 def format_code(dump, lang):
-    template = """<pre><code class="language-{language}">{txt}</code></pre>"""
     for item in lang.matches:
         txt=item.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        dump=dump.replace(item, template.format(txt=txt, language=lang.language))
-    return dump.replace(f"@{lang.language}end", "").replace(f"@{lang.language}", "")
+        dump=dump.replace(item, lang.template.format(txt=txt, language=lang.language))
+    return dump.replace(f"@{lang.language}q", "").replace(f"@{lang.language}", "")
+
+
+def add_link(dump, link):
+    for i, val in enumerate(link.a_matches):
+        dump=dump.replace(link.href_matches[i], "")
+        dump=dump.replace(val, link.template.format(a=val.strip("@a "), href=link.href_matches[i]))
+    return dump.replace("@aq", "").replace("@a", "").replace("@hrefq", "").replace("@href", "")
 
 
 class lang:
-    def __init__(self, doc, language):
+    def __init__(self, doc, language, template="""<pre><code class="language-{language}">{txt}</code></pre>"""):
         self.language = language
-        self.rgx = """@{language}([\s\S]*?)@{language}end""".format(language=language)
-        # self.eachrow = findall(self.rgx, doc)[0].split("\n")[1:-1]
+        self.rgx = """@{language}\\b([\s\S]*?)@{language}q\\b""".format(language=language)
         self.matches = findall(self.rgx, doc)
-        # self.matches = ["\n".join(x.split("\n")[1:-1]) for x in self.all]
+        self.template = template
 
-"""@{language}([\s\S]*?)@{language}end"""
+
+class link:
+    def __init__(self, doc, template="""<a href="{href}">{a}</a>"""):
+        self.a = """@a\\b.*@aq\\b"""
+        self.href = """@href\\b([\s\S]*?)@hrefq\\b"""
+        self.a_matches = findall(self.a, doc)
+        self.href_matches = findall(self.href, doc)
+        self.template = template
+
 
 if len(argv) == 2:
 
@@ -26,14 +39,19 @@ if len(argv) == 2:
 
         document= fp.read()
 
-        javacode   = lang(document, "java")
-        bashcode   = lang(document, "bash")
-        markupcode = lang(document, "markup")
+        #Mapping custom markup '#' to h2
+        h2 = lang(document, "#", """<h2>{txt}</h2>""")
+        document = format_code(document, h2)
 
-        document = format_code(document, javacode)
-        document = format_code(document, bashcode)
-        document = format_code(document, markupcode)
 
+        #Mapping links to their respective href's
+        links = link(document)
+        document = add_link(document, links)
+
+        #Mapping each code snippet to its lang-specific css
+        all_languages = ["java", "bash", "markup", "python", "css", "javascript", "csharp"]
+        for each in all_languages:
+            document = format_code(document, lang(document, each))
 
 
         bootstrap = """<meta charset="utf-8">
@@ -59,7 +77,7 @@ body{
   pre{
     margin: 0 auto;
     width: fit-content;
-    color:#fff;
+    color: BurlyWood;
     background:#252828;
     white-space: pre-wrap;
     border-style: none;
@@ -126,9 +144,5 @@ $(document).ready(function(){
         """
 
         print(template)
-        print(javacode.rgx)
-        print(javacode.matches)
-        # print(link.matches)
-        # print(href.matches)
-        # print(len(tutorials), len(commentaries))
-        # print(pnks)
+        # print(links.a_matches)
+        # print(links.href_matches)

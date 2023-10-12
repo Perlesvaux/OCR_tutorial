@@ -1,37 +1,37 @@
-0- Install Java, Maven & Tesseract:
+@#0- Install Java, Maven & Tesseract:@#q
 @bash
-sudo apt install default-jdk    ##Check version with: java -version
-sudo apt install maven          ##Check version with: mvn --version
-sudo apt install tesseract-ocr -y ##This one here installs all available languages: sudo apt install tesseract-ocr-all -y
-@bashend
+sudo apt install default-jdk      #Check version with: java -version
+sudo apt install maven            #Check version with: mvn --version
+sudo apt install tesseract-ocr -y #This one here installs all available languages: sudo apt install tesseract-ocr-all -y
+@bashq
 You can navigate to this directory to find the language data files. Such as: spa.traineddata, eng.traineddata, etc.
 @bash
-/usr/share/tesseract-ocr/4.0/tessdata/
-@bashend
-1- Initial project setup:
+cd /usr/share/tesseract-ocr/4.0/tessdata/
+@bashq
+@#1- Initial project setup:@#q
 Go to the directory you wanna put your project on. Desktop or Documents should do.
 Open the terminal and enter:
 @bash
+#This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME/APP_NAME is where your code goes.
 mvn archetype:generate -DgroupId=COMPANY_NAME -DartifactId=APP_NAME -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
-@bashend
-This will generate a directory called APP_NAME in current directory. Inside, you'll find the pom.xml. src/main/java/COMPANY_NAME is where your code goes.
+@bashq
 
 Add these dependencies to the pom.xml
 
 This one is a must!
 @markup
-look for <dependencies> tag
-inside, put this dependency:
+<!--look for <dependencies> tag-->
+<!--inside, put this dependency:-->
  <dependency>
      <groupId>net.sourceforge.tess4j</groupId>
      <artifactId>tess4j</artifactId>
      <version>5.8.0</version>
  </dependency>
-@markupend
+@markupq
 [1] This one allows to run a lightweight .jar with mvn 
 @markup
-look for <build> tag
-look for <plugins> tag
+<!--look for <build> tag-->
+<!--look for <plugins> tag-->
 inside, put this plugin:
  <plugin>
      <groupId>org.codehaus.mojo</groupId>
@@ -45,14 +45,14 @@ inside, put this plugin:
          </execution>
      </executions>
      <configuration>
-         <mainClass>COMPANY_NAME.MAIN_CLASS</mainClass>
+         <mainClass>COMPANY_NAME.APP_NAME.MAIN_CLASS</mainClass>
      </configuration>
  </plugin>
-@markupend
+@markupq
 [2] This one generates a self-sufficient "fat-jar" that includes all dependencies
 @markup
-look for <build> tag
-look for <plugins> tag
+<!--look for <build> tag-->
+<!--look for <plugins> tag-->
 inside, put this plugin:
  <plugin>
      <groupId>org.apache.maven.plugins</groupId>
@@ -70,23 +70,23 @@ inside, put this plugin:
                  </descriptorRefs>
                  <archive>
                      <manifest>
-                         <mainClass>COMPANY_NAME.MAIN_CLASS</mainClass>
+                         <mainClass>COMPANY_NAME.APP_NAME.MAIN_CLASS</mainClass>
                      </manifest>
                  </archive>
              </configuration>
          </execution>
      </executions>
  </plugin>
-@markupend
+@markupq
 
-2- Time to code!:
-go to src/main/java/COMPANY_NAME/
+@#2- Time to code!:@#q
+go to src/main/java/COMPANY_NAME/APP_NAME
 
 let's create a class with a main method (i.e.: App.java)
 
 Inside, let's put this code:
 @java
-package COMPANY_NAME;
+package COMPANY_NAME.APP_NAME;
 import java.io.*;
 import net.sourceforge.tess4j.*;
 
@@ -104,19 +104,22 @@ public class App
         }
     }
 }
-@javaend
+@javaq
 
 **This path contains the language data files. you can use a different one if you want.
-  More languages can be found ###*here###*  ^^^ https://tesseract-ocr.github.io/tessdoc/Data-Files^^^
+  More languages can be found @a here @aq  @href https://tesseract-ocr.github.io/tessdoc/Data-Files @hrefq
 
 
-3- Let's package and run!:
+@#3- Let's package and run!:@#q
 @bash
 mvn clean package
-
+@bashq
 [1] using exec-maven-plugin...
+@bash
 mvn exec:java -Dexec.args="path/to/image_file"
+@bashq
 
 [2] using maven-assembly-plugin...
+@bash
 java -jar target/APP_NAME.jar "path/to/image_file"
-@bashend
+@bashq
